@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body onload="drawPins()">
+	<canvas id="pinfall"></canvas>
+	<script type="text/javascript">
+		function drawPins() {
+			var canvas = document.getElementById('pinfall');
+			var context = canvas.getContext('2d');
+
+			var fullCircle = (Math.PI / 180) * 360;
+			context.beginPath();
+
+			var rowPins = 4;
+			var rowOffset = 0;
+			var pinSize = 10;
+			var topSize = 7;
+			for (var yMult = 0; yMult < 4; yMult++, rowPins--) {
+				var yPos = (3 * pinSize * yMult) + pinSize + 1;
+				for (var xMult = rowPins; xMult > 0; xMult--) {
+					var xPos = (4 * pinSize * xMult) + rowOffset;
+					context.moveTo(xPos + pinSize, yPos);
+					context.arc(xPos, yPos, pinSize, 0, 2 * Math.PI, false);
+					context.moveTo(xPos + topSize, yPos);
+					context.arc(xPos, yPos, topSize, 0, 2 * Math.PI, false);
+				}
+				rowOffset += (2 * pinSize);
+			}
+			context.stroke();
+		}
+
+		// Setting all pins as not knocked down
+		var pinfall = [];
+		for (var i = 0; i < 10; i++) { pinfall.push(0); }
+
+		function scorePinfall() {
+		}
+	</script>
+</body>
+</html>
