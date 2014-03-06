@@ -2,10 +2,14 @@
 <html>
 <head>
 </head>
-<body onload="drawPins()">
+<body onload="initializePins();initializeScoreboard()">
+	<h1>Frame 1</h1>
+	<canvas id="scoreboard"></canvas>
 	<canvas id="pinfall"></canvas>
 	<script type="text/javascript">
-		function drawPins() {
+		var framePins = [];
+
+		function initializePins() {
 			var canvas = document.getElementById('pinfall');
 			var context = canvas.getContext('2d');
 
@@ -30,11 +34,17 @@
 			context.stroke();
 		}
 
-		// Setting all pins as not knocked down
-		var pinfall = [];
-		for (var i = 0; i < 10; i++) { pinfall.push(0); }
-
 		function scorePinfall() {
+		}
+
+		function initializeScoreboard() {
+			var context = document.getElementById("scoreboard")
+					.getContext('2d');
+
+			for (var frame = 1; frame <= 10; frame++) {
+				context.strokeRect(25 * frame, 0, 25, 25);
+				context.strokeRect(25 * frame + 15, 0, 10, 10);
+			}
 		}
 	</script>
 </body>
