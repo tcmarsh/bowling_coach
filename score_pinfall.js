@@ -9,7 +9,35 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 	var frames = [];
 	document.getElementById('save').addEventListener('click',
-		function() { savePinfall(pins, frames); });
+		function() {
+			var frame = frames.length <= 0 ? {} : frames[frames.length - 1];
+			if (frames.length <= 0) { frames.push(frame); }
+
+			var newFrame = false;
+			if (frame.first == null) {
+				frame.first = savePinfall(pins, pinSize);
+				newFrame = frame.first === 10;
+			}
+			else if (frame.second == null) {
+				frame.second = savePinfall(pins, pinSize);
+				newFrame = true;
+			}
+
+			for (var property in frame) {
+				if (frame.hasOwnProperty(property)) {
+					alert(property + ": " + frame[property]);
+				}
+			}
+			if (newFrame) {
+				var canvas = document.getElementById('pinfall');
+				canvas.getContext('2d')
+						.clearRect(0, 0, canvas.width, canvas.height);
+				pins = initializePins(pinSize);
+				drawPins(pins, pinSize);
+
+				frames.push({});
+			}
+		});
 }, false);
 
 function initializePins(pinSize) {
@@ -21,7 +49,7 @@ function initializePins(pinSize) {
 		var yPosition = yNumber * pinSize * 2;
 		xOffset += pinSize * 3 / 2;
 		for (var xNumber = 5 - yNumber; xNumber > 0; xNumber--) {
-			var pin = {};
+			var pin = {isStanding: true};
 			var xPosition = xNumber * pinSize * 3 + xOffset;
 
 			pin.xPosition = xPosition;
@@ -68,6 +96,8 @@ function checkPinfall(event, pins, pinSize) {
 			maxY = pins[i].yPosition + pinSize;
 		if (xPos > minX && xPos < maxX &&
 			yPos > minY && yPos < maxY) {
+			pins[i].isStanding = false;
+
 			context = canvas.getContext('2d');
 			context.beginPath();
 
@@ -89,5 +119,23 @@ function getTotalOffset(element, direction) {
 	return offset;
 }
 
-function savePinfall(pins) {
+function savePinfall(pins, pinSize) {
+	var score = 0;
+	for (var i = 0; i < pins.length; i++) {
+		if (pins[i].isStanding) {
+			continue;
+		}
+		score++;
+		var context = document.getElementById('pinfall').getContext('2d');
+
+		context.beginPath();
+		context.clearRect(pins[i].xPosition - pinSize - 1,
+				pins[i].yPosition - pinSize - 1,
+				pinSize * 2 + 2, pinSize * 2 + 2);
+
+		pins.splice(i, 1);
+		i--;
+	}
+
+	return score;
 }
