@@ -4,6 +4,12 @@ document.addEventListener('DOMContentLoaded', function(event) {
 	var pins = initializePins(pinSize);
 	drawPins(pins, pinSize);
 
+	document.getElementById('pinfall').addEventListener('click',
+		function(event) { checkPinfall(event, pins, pinSize); });
+
+	var frames = [];
+	document.getElementById('save').addEventListener('click',
+		function() { savePinfall(pins, frames); });
 }, false);
 
 function initializePins(pinSize) {
@@ -48,4 +54,40 @@ function drawPins(pins, pinSize) {
 		context.fillText(i + 1, xPos, yPos);
 	}
 	context.stroke();
+}
+
+function checkPinfall(event, pins, pinSize) {
+	var canvas = document.getElementById('pinfall');
+	var xPos = event.pageX - getTotalOffset(canvas, "Left");
+	var yPos = event.pageY - getTotalOffset(canvas, "Top");
+
+	for (var i = 0, j = pins.length; i < j; i++) {
+		var minX = pins[i].xPosition - pinSize,
+			maxX = pins[i].xPosition + pinSize,
+			minY = pins[i].yPosition - pinSize,
+			maxY = pins[i].yPosition + pinSize;
+		if (xPos > minX && xPos < maxX &&
+			yPos > minY && yPos < maxY) {
+			context = canvas.getContext('2d');
+			context.beginPath();
+
+			context.arc(pins[i].xPosition, pins[i].yPosition,
+					pinSize, 0, Math.PI * 2);
+			context.fill();	
+		}
+	}
+}
+
+function getTotalOffset(element, direction) {
+	var offset = 0;
+	do {
+		offset += element["offset" + direction];
+		element = element.offsetParent
+	}
+	while (element !== null);
+
+	return offset;
+}
+
+function savePinfall(pins) {
 }
