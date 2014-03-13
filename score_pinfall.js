@@ -9,18 +9,20 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 	var frames = [];
 	document.getElementById('save').addEventListener('click',
-		function() {
+		function saveListener() {
 			var frame = frames.length <= 0 ? {} : frames[frames.length - 1];
 			if (frames.length <= 0) { frames.push(frame); }
 
 			var newFrame = false;
 			if (frame.first == null) {
-				frame.first = savePinfall(pins, pinSize);
+				frame.first = savePinfall(pins);
 				newFrame = frame.first === 10;
+				clearPins(pins, pinSize);
 			}
 			else if (frame.second == null) {
-				frame.second = savePinfall(pins, pinSize);
+				frame.second = savePinfall(pins);
 				newFrame = true;
+				clearPins(pins, pinSize);
 			}
 
 			for (var property in frame) {
@@ -28,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 					alert(property + ": " + frame[property]);
 				}
 			}
-			if (newFrame) {
+			if (newFrame && frames.length < 10) {
 				var canvas = document.getElementById('pinfall');
 				canvas.getContext('2d')
 						.clearRect(0, 0, canvas.width, canvas.height);
@@ -36,6 +38,9 @@ document.addEventListener('DOMContentLoaded', function(event) {
 				drawPins(pins, pinSize);
 
 				frames.push({});
+			}
+			else if (newFrame) {
+				alert(scoreGame(frames));
 			}
 		});
 }, false);
@@ -119,23 +124,123 @@ function getTotalOffset(element, direction) {
 	return offset;
 }
 
-function savePinfall(pins, pinSize) {
+function savePinfall(pins) {
 	var score = 0;
 	for (var i = 0; i < pins.length; i++) {
 		if (pins[i].isStanding) {
 			continue;
 		}
 		score++;
-		var context = document.getElementById('pinfall').getContext('2d');
-
-		context.beginPath();
-		context.clearRect(pins[i].xPosition - pinSize - 1,
-				pins[i].yPosition - pinSize - 1,
-				pinSize * 2 + 2, pinSize * 2 + 2);
-
 		pins.splice(i, 1);
 		i--;
 	}
 
 	return score;
 }
+function clearPins(pins, pinSize) {
+	for (var i = 0; i < pins.length; i++) {
+		if (pins[i].isStanding) {
+			continue;
+		}
+		var context = document.getElementById('pinfall').getContext('2d');
+
+		context.beginPath();
+		context.clearRect(pins[i].xPosition - pinSize - 1,
+				pins[i].yPosition - pinSize - 1,
+				pinSize * 2 + 2, pinSize * 2 + 2);
+	}
+}
+
+function scoreGame(frames) {
+	if (frames.length < 10) {
+		return "Unable to score a game without 10 frames.\n";
+	}
+
+	var score = 0;
+	for (var i = 0, j = frames.length; i < j; i++) {
+		var frame = frames[i];
+
+		score += frame.first;
+	}
+
+	return score;
+}
+
+// Test functions after this
+function testScoreGame() {
+	var frames = [];
+	for (var i = 0; i < 10; i++) {
+		frames.push({first:10});
+	}
+	frames[9].second = 10;
+	frames[9].third = 10;
+
+	var threeHundred = scoreGame(frames);
+	if (threeHundred !== 300) {
+		return "Expected 300, got " + threeHundred;
+	}
+
+	return null;
+}
+function testScorePinfall() {
+	var initTestPins = function() {
+		var pins = [];
+		
+		for (var i = 0; i < 10; i++) {
+			pins[i] = {isStanding: true};
+		}
+
+		return pins;
+	};
+	var pins = initTestPins();
+
+	var score = savePinfall(pins);
+	if (score !== 0) {
+		return "Expected 0, got " + score + " pins.";
+	}
+
+	pins = initTestPins();
+	pins[0].isStanding = false;
+	score = savePinfall(pins);
+	if (score !== 1) {
+		return "Expected 1, got " + score + " pins.";
+	}
+
+	pins = initTestPins();
+	var length = pins.length;
+	for (var i = 0; i < pins.length; i++) {
+		pins[i].isStanding = false;
+	}
+	score = savePinfall(pins);
+	if (score !== length) {
+		return "Expected " + pins.length + ", got " + score + " pins.";
+	}
+
+	return null;
+}
+
+function runTests() {
+	var errors = [];
+	var tests = {"scoreGame": testScoreGame,
+			"scorePinfall": testScorePinfall};
+
+	for (var name in tests) {
+		if (!tests.hasOwnProperty(name)) {
+			continue;
+		}
+
+		var testResult = tests[name]();
+		if (testResult !== null) {
+			errors.push(name + ": " + testResult);
+		}
+	}
+
+	var errorString = "";
+	for (var i = 0, j = errors.length; i < j; i++) {
+		errorString += errors[i] + "\n";
+	}
+	alert(errorString === "" ? "No errors found." :
+			"The following errors were found:\n\n" + errorString);
+}
+
+runTests();
