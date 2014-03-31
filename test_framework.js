@@ -13,7 +13,8 @@ var TestResult = function()
     
     this.addResult = function(testName, result)
     {
-        if (testName === null || result !== null && result.found === undefined)
+        if (testName === null ||
+				result !== null && result.found === undefined)
         {
             alert("Bad result " + result + ", test results may be invalid");
             return;
@@ -46,13 +47,22 @@ var TestResult = function()
             failureString = "Tests failed as follows:\n\n" + failureString;
         }
       
-        var successString = "The following tests succeeded:\n\n";
+        var successString = "";
         for (var i = 0, j = successes.length; i < j; i++)
         {
             successString += successes[i] + "\n";
         }
+		if (successString.length !== "")
+		{
+			successString = "The following tests succeeded:\n\n" +
+					successString;
+		}
         
-        return failureString + (failureString.length > 0 ? "\n\n" : "") + successString;
+		var resultString = failureString +
+				(failureString.length > 0 ? "\n\n" : "") +
+				successString;
+		return resultString.length > 0 ? resultString :
+				"No test successes or failures were reported.\n";
     };
 };
 
@@ -63,4 +73,14 @@ var TestFailure = function(expected, found)
 {
     this.expected = expected;
     this.found = found;
+};
+
+var Test = {
+	assertEquals: function(expectedValue, testValue) {
+		if (testValue !== expectedValue)
+		{
+			return new TestFailure(expectedValue, testValue);
+		}
+		return null;
+	}
 };
