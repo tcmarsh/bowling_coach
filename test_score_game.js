@@ -64,7 +64,7 @@ function testScoreStrikePlusTwo()
 
 	return Test.assertEquals(14, scoreGame(frames));
 }
-function testScoreThreeHundred()
+function testScore300()
 {
 	var frames = initializeFrames(10, 10);
 	frames[9].third = 10;
@@ -75,6 +75,93 @@ function testScoreThreeHundred()
 /* The section that follows tests games I've played (or watched)
  * Not very impressive, right now. Hopefully I improve.
  */
+function test108()
+{
+	var frames = [{first: 5, second: 4}, {first: 10},
+			{first: 3, second: 1}, {first: 10}, {first: 9, second: 0},
+			{first: 9, second: 0}, {first: 9, second: 0},
+			{first: 9, second: 0}, {first: 1, second: 6},
+			{first: 7, second: 3, third: 9}];
+
+	return Test.assertEquals(108, scoreGame(frames));
+}
+function test144()
+{
+	var frames = [{first: 9, second: 0}, {first: 9, second: 1},
+			{first: 9, second: 0}, {first: 0, second: 7},
+			{first: 8, second: 0}, {first: 8, second: 0},
+			{first: 10}, {first: 10}, {first: 8, second: 2},
+			{first: 6, second: 4, third: 10}];
+
+	return Test.assertEquals(144, scoreGame(frames));
+}
+function test95()
+{
+	var frames = [{first: 9, second: 0}, {first: 8, second: 0},
+			{first: 7, second: 0}, {first: 7, second: 0},
+			{first: 7, second: 3}, {first: 2, second: 0},
+			{first: 7, second: 3}, {first: 7, second: 3},
+			{first: 6, second: 2}, {first: 6, second: 3}];
+
+	return Test.assertEquals(95, scoreGame(frames));
+}
+function test201()
+{
+	var frames = [{first: 7, second: 3}, {first: 9, second: 1},
+			{first: 9, second: 1}, {first: 10}, {first: 10}, {first: 10},
+			{first: 6, second: 4}, {first: 10}, {first: 7, second: 2},
+			{first: 8, second: 2, third: 9}];
+
+	return Test.assertEquals(201, scoreGame(frames));
+}
+function test83()
+{
+	var frames = [{first: 4, second: 4}, {first: 9, second: 0},
+			{first: 4, second: 3}, {first: 1, second: 0},
+			{first: 4, second: 3}, {first: 1, second: 9},
+			{first: 7, second: 3}, {first: 1, second: 7},
+			{first: 9, second: 0}, {first: 1, second: 5}];
+
+	return Test.assertEquals(83, scoreGame(frames));
+}
+function test138()
+{
+	var frames = [{first: 10}, {first: 6, second: 3},
+			{first: 0, second: 7}, {first: 9, second: 0},
+			{first: 10}, {first: 8, second: 1}, {first: 10}, {first: 10},
+			{first: 9, second: 0}, {first: 6, second: 3}];
+
+	return Test.assertEquals(138, scoreGame(frames));
+}
+function test141()
+{
+	var frames = [{first: 6, second: 3}, {first: 10}, {first: 10},
+			{first: 9, second: 1}, {first: 9, second: 1},
+			{first: 4, second: 4}, {first: 10}, {first: 8, second: 1},
+			{first: 0, second: 5}, {first: 9, second: 0}];
+
+	return Test.assertEquals(141, scoreGame(frames));
+}
+function test107()
+{
+	var frames = [{first: 4, second: 5}, {first: 10}, {first: 0, second: 8},
+			{first: 8, second: 2}, {first: 8, second: 0},
+			{first: 9, second: 0}, {first: 7, second: 1},
+			{first: 2, second: 0}, {first: 7, second: 2},
+			{first: 9, second: 1, third: 8}];
+
+	return Test.assertEquals(107, scoreGame(frames));
+}
+function test149()
+{
+	var frames = [{first: 9, second: 0}, {first: 8, second: 1},
+			{first: 7, second: 2},
+			{first: 9, second: 1}, {first: 10}, {first: 10},
+			{first: 8, second: 0}, {first: 5, second: 4},
+			{first: 8, second: 2}, {first: 9, second: 1, third: 10}];
+
+	return Test.assertEquals(149, scoreGame(frames));
+}
 
 function initializeZeroFrames()
 {
@@ -97,7 +184,9 @@ function runTests()
     var tests = [testScoreZeroGame, testScoreOneGame, testScoreTwoGame,
 			testScoreTenGame, testScoreTwentyGame, testScoreThirtyGame,
 			testScoreStrikePlusOne, testScoreStrikePlusTwo,
-			testScoreThreeHundred];
+			testScore300,
+			test108, test144, test95, test201, test83, test138, test141,
+			test107, test149];
     var result = new TestResult();
     
     try {
