@@ -176,31 +176,11 @@ function initializeFrames(first, second)
 	return frames;
 }
 
-/* Runs all tests in it's internal test list
- * To run more tests, add them as a function, then put that function in the list
- */
-function runTests()
-{
-    var tests = [testScoreZeroGame, testScoreOneGame, testScoreTwoGame,
-			testScoreTenGame, testScoreTwentyGame, testScoreThirtyGame,
-			testScoreStrikePlusOne, testScoreStrikePlusTwo,
-			testScore300,
-			test108, test144, test95, test201, test83, test138, test141,
-			test107, test149];
-    var result = new TestResult();
-    
-    try {
-        for (var i = 0, j = tests.length; i < j; i++) {
-            result.addResult(tests[i].name + "", tests[i]());
-        }
-    } catch (error) {
-        alert("The following error prevented running all tests:\n\n" +
-            error.message + "\n" +
-            error.stack.split("\n")[1]);
-        return false;
-    }
-    
-    alert(result.getResults());
-}
+var tests = [testScoreZeroGame, testScoreOneGame, testScoreTwoGame,
+	testScoreTenGame, testScoreTwentyGame, testScoreThirtyGame,
+	testScoreStrikePlusOne, testScoreStrikePlusTwo,
+	testScore300,
+	test108, test144, test95, test201, test83, test138, test141,
+	test107, test149];
 
-runTests();
+runTests(tests);

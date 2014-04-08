@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function(event)
 	document.getElementById('pinset').addEventListener('click',
 		function(event)
 		{
-			checkPinfall(event, pins, pinSize);
+			checkPinfall(pins, pinSize, event.pageX, event.pageY);
 		});
 
 	var frames = [];
@@ -71,11 +71,11 @@ function drawPins(pins, pinSize)
 	context.stroke();
 }
 
-function checkPinfall(event, pins, pinSize)
+function checkPinfall(pins, pinSize, pageX, pageY)
 {
 	var canvas = document.getElementById('pinset');
-	var xPos = event.pageX - getTotalOffset(canvas, "Left");
-	var yPos = event.pageY - getTotalOffset(canvas, "Top");
+	var xPos = pageX - getTotalOffset(canvas, "Left");
+	var yPos = pageY - getTotalOffset(canvas, "Top");
 
 	for (var i = 0, j = pins.length; i < j; i++)
 	{
@@ -142,3 +142,85 @@ function clearPins(pins, pinSize)
 				pinSize * 2 + 2, pinSize * 2 + 2);
 	}
 }*/
+
+function savePinfall(pins, frames)
+{
+	var returnFrames = [];
+	for (var i = 0, j = frames.length; i < j; i++)
+	{
+		returnFrames.push(frames[i]);
+	}
+
+	var pinsDown = [];
+	for (var i = 0, j = pins.length; i < j;i ++)
+	{
+		if (!pins[i].isStanding)
+		{
+			pinsDown.push(i + 1);
+		}
+	}
+
+	var currentFrame = returnFrames.length > 0 ?
+			returnFrames.splice(returnFrames.length - 1, 1)[0] : null;
+	var newFrame = new Frame().copy(currentFrame);
+	if (newFrame.setPinsDown(pinsDown) === false)
+	{
+		returnFrames.push(newFrame);
+
+		newFrame = new Frame();
+		newFrame.setPinsDown(pinsDown);
+	}
+	returnFrames.push(newFrame);
+
+	return returnFrames;
+}
+
+var Frame = function()
+{
+	var firstPinsDown = null,
+		secondPinsDown = null,
+		thirdPinsDown = null;
+
+	this.setPinsDown = function(pinsDown)
+	{
+		if (firstPinsDown !== null)
+		{
+			return setSecondPinsDown(pinsDown);
+		}
+		else
+		{
+			firstPinsDown = pinsDown;
+		}
+
+		return true;
+	};
+	var setSecondPinsDown = function(pinsDown)
+	{
+		if (secondPinsDown !== null)
+		{
+			return false;
+		}
+
+		secondPinsDown = pinsDown;
+		return true;
+	};
+	this.firstPinsDown = function()
+	{
+		return firstPinsDown;
+	}
+	this.secondPinsDown = function()
+	{
+		return secondPinsDown;
+	}
+
+	this.copy = function(oldFrame)
+	{
+		if (oldFrame !== null)
+		{
+			firstPinsDown = oldFrame.firstPinsDown();
+			secondPinsDown = oldFrame.secondPinsDown();
+		}
+
+		return this;
+	}
+};

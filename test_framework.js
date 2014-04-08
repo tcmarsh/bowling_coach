@@ -16,6 +16,15 @@ var TestResult = function()
         if (testName === null ||
 				result !== null && result.found === undefined)
         {
+			if (Array.isArray(result))
+			{
+				for (var i = 0, j = result.length; i < j; i++)
+				{
+					this.addResult(testName + "_" + i, result[i]);
+				}
+				return;
+			}
+
             alert("Bad result " + result + ", test results may be invalid");
             return;
         }
@@ -76,11 +85,51 @@ var TestFailure = function(expected, found)
 };
 
 var Test = {
-	assertEquals: function(expectedValue, testValue) {
+	assertEquals: function(expectedValue, testValue)
+	{
 		if (testValue !== expectedValue)
 		{
 			return new TestFailure(expectedValue, testValue);
 		}
 		return null;
+	},
+	assertArrayEquals: function(expectedArray, testArray)
+	{
+		if (!Array.isArray(expectedArray))
+		{
+			return new TestFailure("an array", testArray);
+		}
+
+		for (var i = 0, j = expectedArray.length; i < j; i++)
+		{
+			if (testArray[i] !== expectedArray[i])
+			{
+				return new TestFailure(expectedArray[i], testArray[i]);
+			}
+		}
+
+		return null;
 	}
 };
+
+/* Runs all tests in the tests variable
+ * To run more tests, add them as a function, then add them to the list
+ * Tests must return a TestResult object
+ */
+function runTests(tests)
+{
+    var result = new TestResult();
+    
+    try {
+        for (var i = 0, j = tests.length; i < j; i++) {
+            result.addResult(tests[i].name + "", tests[i]());
+        }
+    } catch (error) {
+        alert("The following error prevented running all tests:\n\n" +
+            error.message + "\n" +
+            error.stack.split("\n")[1]);
+        return false;
+    }
+    
+    alert(result.getResults());
+}
